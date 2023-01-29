@@ -1,22 +1,22 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App";
+import ButtonLoop from "./ButtonLoop";
 import reportWebVitals from "./reportWebVitals";
+import {
+  injectRootIntoYoutubePlayer,
+  getRootExtensionDOM,
+} from "./helpers/dom";
 
-const bodies = document.body;
-const div = document.createElement("div");
-div.id = "extension";
-bodies.appendChild(div);
+const { existedRootDOM } = injectRootIntoYoutubePlayer();
 
-const root = ReactDOM.createRoot(
-  document.getElementById("extension") as HTMLElement
-);
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+if (!existedRootDOM) {
+  const root = ReactDOM.createRoot(getRootExtensionDOM() as HTMLElement);
+  root.render(
+    <React.StrictMode>
+      <ButtonLoop />
+    </React.StrictMode>
+  );
+}
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

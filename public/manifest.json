@@ -3,7 +3,7 @@
   "description": "The power of React and TypeScript for building interactive Chrome extensions",
   "version": "1.0",
   "manifest_version": 3,
-  "permissions": ["activeTab", "scripting", "tabs"],
+  "permissions": ["activeTab", "scripting", "tabs", "storage", "identity"],
   "action": {},
   "icons": {
     "16": "logo192.png",
@@ -11,12 +11,12 @@
     "128": "logo192.png"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "/static/js/background.js"
   },
-  "host_permissions": ["<all_urls>"],
+  "host_permissions": ["https://www.youtube.com/watch?v=*"],
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["https://www.youtube.com/watch?v=*"],
       "css": ["/static/css/main.css"]
     }
   ]
