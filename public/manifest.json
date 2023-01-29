@@ -1,10 +1,12 @@
 {
-  "name": "Chrome React SEO Extension",
-  "description": "The power of React and TypeScript for building interactive Chrome extensions",
+  "name": "TubeLoop",
+  "description": "TubeLoop is a chrome extension. This extension will add new shortcut in youtube player control. That will help user to using feature easier",
   "version": "1.0",
   "manifest_version": 3,
   "permissions": ["activeTab", "scripting", "tabs", "storage", "identity"],
-  "action": {},
+  "action": {
+    "default_popup": "index.html"
+  },
   "icons": {
     "16": "logo192.png",
     "48": "logo192.png",

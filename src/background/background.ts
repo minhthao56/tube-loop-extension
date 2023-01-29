@@ -16,3 +16,6 @@ async function moveToFirstPosition(
     });
   }
 }
+chrome.runtime.onMessage.addListener((message) => {
+  console.log({ messageBG: message });
+});

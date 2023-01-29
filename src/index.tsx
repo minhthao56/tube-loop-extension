@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import "./index.css";
 import ButtonLoop from "./ButtonLoop";
 import reportWebVitals from "./reportWebVitals";
 import {
