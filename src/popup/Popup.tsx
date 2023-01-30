@@ -1,26 +1,11 @@
 import Toggle from "../components/Toggle";
-import useDefaultMessageToggle from "../hooks/useDefaultMessageToggle";
-import { SettingMessage } from "../types/messages";
+import useDefaultMessageToggleFromStorage from "../hooks/useDefaultMessageToggleFromStorage";
 import Logo from "../assets/logo512.png";
 
 export default function Popup() {
-  const { value } = useDefaultMessageToggle("STATUS_SYSTEM");
+  const { value: valueStatusButtonLoop, handleSendMessage } =
+    useDefaultMessageToggleFromStorage("BUTTON_LOOP_STATUS");
 
-  const handleChangeOnOff = async (
-    event: React.FormEvent<HTMLInputElement>
-  ) => {
-    const checked = event.currentTarget.checked;
-    const [tab] = await chrome.tabs.query({
-      active: true,
-      lastFocusedWindow: true,
-    });
-    if (tab.id) {
-      await chrome.tabs.sendMessage<SettingMessage>(tab.id, {
-        type: "STATUS_SYSTEM",
-        checked,
-      });
-    }
-  };
   return (
     <div className="w-72 h-48 dark:bg-neutral-900 p-3 flex flex-col justify-center items-center">
       <div className="flex justify-end items-center mb-6">
@@ -31,11 +16,14 @@ export default function Popup() {
       </div>
       <div className="px-3">
         <Toggle
-          onChange={handleChangeOnOff}
-          checked={value.checked}
+          onChange={handleSendMessage}
+          checked={valueStatusButtonLoop.checked}
           label={`The button loop is enable`}
         />
-        <Toggle label="Always loop is disable" />
+        <Toggle
+          label="Always loop is disable"
+          disabled={!valueStatusButtonLoop.checked}
+        />
       </div>
     </div>
   );

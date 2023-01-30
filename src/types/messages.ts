@@ -1,4 +1,4 @@
 export interface SettingMessage {
-  type: "STATUS_SYSTEM";
+  type: "BUTTON_LOOP_STATUS";
   checked: boolean;
 }

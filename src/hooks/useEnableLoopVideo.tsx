@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 function useEnableLoopVideo() {
-  const [isLooped, setIsLooped] = useState<Boolean | undefined>(false);
+  const [isLooped, setIsLooped] = useState<boolean | undefined>(false);
 
   const handleSetLoopAttributeVideo = () => {
     const video = document.querySelector("video");

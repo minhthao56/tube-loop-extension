@@ -3,13 +3,9 @@ import { SettingMessage } from "../types/messages";
 
 export interface UseMessageToggle {
   typeMessage: SettingMessage["type"];
-  defaultValue?: Boolean;
 }
-export default function useMessageToggle({
-  typeMessage,
-  defaultValue,
-}: UseMessageToggle) {
-  const [isChecked, setIsChecked] = useState(defaultValue || true);
+export default function useMessageToggle({ typeMessage }: UseMessageToggle) {
+  const [isChecked, setIsChecked] = useState(true);
   const handleMessage = useCallback(
     async (message: SettingMessage) => {
       if (message.type === typeMessage) {
@@ -21,11 +17,16 @@ export default function useMessageToggle({
   );
 
   useEffect(() => {
+    (async () => {
+      const storageValue = await chrome.storage.local.get(typeMessage);
+      setIsChecked(storageValue[typeMessage]);
+    })();
+
     chrome.runtime.onMessage.addListener(handleMessage);
     return () => {
       chrome.runtime.onMessage.removeListener(handleMessage);
     };
-  }, [handleMessage]);
+  }, [handleMessage, typeMessage]);
 
   return { isChecked };
 }
