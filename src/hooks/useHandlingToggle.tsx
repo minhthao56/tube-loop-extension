@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { SettingMessage } from "../types/messages";
 
-export default function useDefaultMessageToggleFromStorage(
-  typeMessage: SettingMessage["type"]
-) {
+export default function useHandlingToggle(typeMessage: SettingMessage["type"]) {
   const [value, setValue] = useState<SettingMessage>({
-    checked: true,
+    checked: false,
     type: typeMessage,
   });
 
@@ -34,7 +32,7 @@ export default function useDefaultMessageToggleFromStorage(
 
   const handleGetMessageFromStorage = useCallback(async () => {
     const storageValue = await chrome.storage.local.get(typeMessage);
-    await handleSendMessage(storageValue[typeMessage]);
+    await handleSendMessage(storageValue[typeMessage] || false);
   }, [handleSendMessage, typeMessage]);
 
   useEffect(() => {

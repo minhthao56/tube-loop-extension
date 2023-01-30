@@ -1,32 +1,38 @@
 import { useCallback, useEffect, useState } from "react";
-import { SettingMessage } from "../types/messages";
+import { SettingMessage, TypeMessage } from "../types/messages";
 
-export interface UseMessageToggle {
-  typeMessage: SettingMessage["type"];
-}
-export default function useMessageToggle({ typeMessage }: UseMessageToggle) {
-  const [isChecked, setIsChecked] = useState(true);
-  const handleMessage = useCallback(
-    async (message: SettingMessage) => {
-      if (message.type === typeMessage) {
-        setIsChecked(message.checked);
-        await chrome.storage.local.set({ [typeMessage]: message.checked });
-      }
-    },
-    [typeMessage]
-  );
+export default function useMessageToggle() {
+  const [isEnableButtonLoop, setIsEnableButtonLoop] = useState(true);
+  const [isEnableAlwaysLoop, setIsEnableAlwaysLoop] = useState(false);
+
+  const handleMessage = useCallback(async (message: SettingMessage) => {
+    if (message.type === "BUTTON_LOOP_STATUS") {
+      setIsEnableButtonLoop(message.checked);
+    }
+    if (message.type === "ALWAYS_LOOP") {
+      setIsEnableAlwaysLoop(message.checked);
+    }
+    await chrome.storage.local.set({ [message.type]: message.checked });
+  }, []);
 
   useEffect(() => {
     (async () => {
-      const storageValue = await chrome.storage.local.get(typeMessage);
-      setIsChecked(storageValue[typeMessage]);
+      const [valueButtonLoop, valueAlwayLoop] = await Promise.all([
+        chrome.storage.local.get(TypeMessage.BUTTON_LOOP_STATUS),
+        chrome.storage.local.get(TypeMessage.ALWAYS_LOOP),
+      ]);
+
+      setIsEnableButtonLoop(
+        valueButtonLoop[TypeMessage.BUTTON_LOOP_STATUS] || false
+      );
+      setIsEnableButtonLoop(valueAlwayLoop[TypeMessage.ALWAYS_LOOP] || false);
     })();
 
     chrome.runtime.onMessage.addListener(handleMessage);
     return () => {
       chrome.runtime.onMessage.removeListener(handleMessage);
     };
-  }, [handleMessage, typeMessage]);
+  }, [handleMessage]);
 
-  return { isChecked };
+  return { isEnableButtonLoop, isEnableAlwaysLoop };
 }

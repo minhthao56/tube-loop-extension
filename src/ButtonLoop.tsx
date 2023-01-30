@@ -3,16 +3,15 @@ import useEnableLoopVideo from "./hooks/useEnableLoopVideo";
 import useMessageToggle from "./hooks/useMessageToggle";
 
 function App() {
-  const { handleSetLoopAttributeVideo, isLooped } = useEnableLoopVideo();
+  const { isEnableAlwaysLoop, isEnableButtonLoop } = useMessageToggle();
 
-  const { isChecked: isTurnedOnButtonLoop } = useMessageToggle({
-    typeMessage: "BUTTON_LOOP_STATUS",
-  });
+  const { handleToggleLoopAttributeVideo, isLooped } =
+    useEnableLoopVideo(isEnableAlwaysLoop);
 
   return (
     <>
-      {isTurnedOnButtonLoop ? (
-        <div className="ytp-button" onClick={handleSetLoopAttributeVideo}>
+      {isEnableButtonLoop ? (
+        <div className="ytp-button" onClick={handleToggleLoopAttributeVideo}>
           <div
             style={{
               height: "100%",
