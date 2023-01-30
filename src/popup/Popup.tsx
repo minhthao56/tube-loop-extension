@@ -1,7 +1,7 @@
 import Toggle from "../components/Toggle";
 import useDefaultMessageToggle from "../hooks/useDefaultMessageToggle";
 import { SettingMessage } from "../types/messages";
-import Logo from "../assets/logo256.png";
+import Logo from "../assets/logo512.png";
 
 export default function Popup() {
   const { value } = useDefaultMessageToggle("STATUS_SYSTEM");
@@ -23,7 +23,7 @@ export default function Popup() {
   };
   return (
     <div className="w-72 h-48 dark:bg-neutral-900 p-3 flex flex-col justify-center items-center">
-      <div className="flex justify-center items-center mb-6">
+      <div className="flex justify-end items-center mb-6">
         <img src={Logo} alt="logo" className="w-7 pr-2" />
         <h1 className="dark:text-white text-base text-center font-bold">
           TubeLoop
