@@ -1,4 +1,6 @@
+import { useCallback, useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { URL_YOUTUBE_PLAY } from "../constants/app";
 import { getDefaultValueFromStorage } from "../helpers/storage";
 import { SettingMessage, TypeMessage } from "../types/messages";
 
@@ -9,12 +11,9 @@ interface PopupFromProps {
 
 export default function useFormPopup() {
   const { register, getValues, setValue, control } = useForm<PopupFromProps>({
-    defaultValues: async () => {
-      const { alwayLoop, buttonLoop } = await getDefaultValueFromStorage();
-      return {
-        ALWAYS_LOOP: alwayLoop,
-        BUTTON_LOOP_STATUS: buttonLoop,
-      };
+    defaultValues: {
+      BUTTON_LOOP_STATUS: true,
+      ALWAYS_LOOP: false,
     },
   });
 
@@ -23,22 +22,23 @@ export default function useFormPopup() {
     name: ["BUTTON_LOOP_STATUS", "ALWAYS_LOOP"],
   });
 
-  const handleSendMessage = async (
-    value: boolean,
-    type: SettingMessage["type"]
-  ) => {
-    const [tab] = await chrome.tabs.query({
-      active: true,
-      lastFocusedWindow: true,
-    });
-    if (tab.id) {
-      await chrome.tabs.sendMessage<SettingMessage>(tab.id, {
-        type,
-        checked: value,
+  const handleSendMessage = useCallback(
+    async (value: boolean, type: SettingMessage["type"]) => {
+      const tabs = await chrome.tabs.query({
+        url: `${URL_YOUTUBE_PLAY}*`,
       });
-      setValue(type, value as never);
-    }
-  };
+      for (const tab of tabs) {
+        if (tab?.id) {
+          await chrome.tabs.sendMessage<SettingMessage>(tab.id, {
+            type,
+            checked: value,
+          });
+          setValue(type, value as never);
+        }
+      }
+    },
+    [setValue]
+  );
 
   const handleChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -51,6 +51,16 @@ export default function useFormPopup() {
     }
     await handleSendMessage(checked, type);
   };
+
+  const handleSetValueAsync = useCallback(async () => {
+    const { alwayLoop, buttonLoop } = await getDefaultValueFromStorage();
+    await handleSendMessage(buttonLoop, "BUTTON_LOOP_STATUS");
+    await handleSendMessage(alwayLoop, "ALWAYS_LOOP");
+  }, [handleSendMessage]);
+
+  useEffect(() => {
+    handleSetValueAsync();
+  }, [handleSetValueAsync]);
 
   return {
     handleSendMessage,

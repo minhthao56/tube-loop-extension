@@ -1,6 +1,7 @@
 import Toggle from "../components/Toggle";
 import Logo from "../assets/logo512.png";
 import useFormPopup from "../hooks/useFormPopup";
+import { covertBooleanToTextAble } from "../helpers/app";
 
 export default function Popup() {
   const { handleChange, register, valueAlwaysLoop, valueButtonLoop } =
@@ -17,12 +18,14 @@ export default function Popup() {
       <div className="px-3">
         <Toggle
           {...register("BUTTON_LOOP_STATUS")}
-          label={`The button loop is ${valueButtonLoop}`}
+          label={`The button loop is ${covertBooleanToTextAble(
+            valueButtonLoop
+          )}`}
           onChange={(e) => handleChange(e, "BUTTON_LOOP_STATUS")}
         />
         <Toggle
           {...register("ALWAYS_LOOP")}
-          label={`Always loop is  ${valueAlwaysLoop}`}
+          label={`Always loop is  ${covertBooleanToTextAble(valueAlwaysLoop)}`}
           disabled={!valueButtonLoop}
           onChange={(e) => handleChange(e, "ALWAYS_LOOP")}
         />
