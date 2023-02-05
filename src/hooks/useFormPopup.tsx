@@ -40,17 +40,20 @@ export default function useFormPopup() {
     [setValue]
   );
 
-  const handleChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-    type: SettingMessage["type"]
-  ) => {
-    const checked = event.currentTarget.checked;
+  const handleChange = useCallback(
+    async (
+      event: React.ChangeEvent<HTMLInputElement>,
+      type: SettingMessage["type"]
+    ) => {
+      const checked = event.currentTarget.checked;
 
-    if (type === "BUTTON_LOOP_STATUS" && !checked) {
-      await handleSendMessage(false, "ALWAYS_LOOP");
-    }
-    await handleSendMessage(checked, type);
-  };
+      if (type === "BUTTON_LOOP_STATUS" && !checked) {
+        await handleSendMessage(false, "ALWAYS_LOOP");
+      }
+      await handleSendMessage(checked, type);
+    },
+    [handleSendMessage]
+  );
 
   const handleSetValueAsync = useCallback(async () => {
     const { alwayLoop, buttonLoop } = await getDefaultValueFromStorage();
