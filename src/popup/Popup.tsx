@@ -1,19 +1,10 @@
 import Toggle from "../components/Toggle";
-import useHandlingToggleButtonLoop from "../hooks/useHandlingToggle";
-import useHandlingToggleAlwayLoop from "../hooks/useHandlingToggle";
-
 import Logo from "../assets/logo512.png";
+import useFormPopup from "../hooks/useFormPopup";
 
 export default function Popup() {
-  const {
-    value: valueStatusButtonLoop,
-    handleSendMessage: handleSendMessageButtonLoop,
-  } = useHandlingToggleButtonLoop("BUTTON_LOOP_STATUS");
-
-  const {
-    value: valueStatusAlwayLoop,
-    handleSendMessage: handleSendMessageAlwayLoop,
-  } = useHandlingToggleAlwayLoop("ALWAYS_LOOP");
+  const { handleChange, register, valueAlwaysLoop, valueButtonLoop } =
+    useFormPopup();
 
   return (
     <div className="w-72 h-48 dark:bg-neutral-900 p-3 flex flex-col justify-center items-center">
@@ -25,15 +16,15 @@ export default function Popup() {
       </div>
       <div className="px-3">
         <Toggle
-          onChange={handleSendMessageButtonLoop}
-          checked={valueStatusButtonLoop.checked}
-          label={`The button loop is enable`}
+          {...register("BUTTON_LOOP_STATUS")}
+          label={`The button loop is ${valueButtonLoop}`}
+          onChange={(e) => handleChange(e, "BUTTON_LOOP_STATUS")}
         />
         <Toggle
-          checked={valueStatusAlwayLoop.checked}
-          label="Always loop is disable"
-          disabled={!valueStatusButtonLoop.checked}
-          onChange={handleSendMessageAlwayLoop}
+          {...register("ALWAYS_LOOP")}
+          label={`Always loop is  ${valueAlwaysLoop}`}
+          disabled={!valueButtonLoop}
+          onChange={(e) => handleChange(e, "ALWAYS_LOOP")}
         />
       </div>
     </div>

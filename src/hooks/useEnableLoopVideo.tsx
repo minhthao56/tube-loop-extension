@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 function useEnableLoopVideo(isEnableAlwaysLoop?: boolean) {
   const [isLooped, setIsLooped] = useState<boolean | undefined>(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const handleToggleLoopAttributeVideo = useCallback(() => {
-    const video = document.querySelector("video");
-    if (video?.loop && !isEnableAlwaysLoop) {
+    const video = videoRef.current;
+    if (isEnableAlwaysLoop) return;
+    if (video?.loop) {
       video.removeAttribute("loop");
     } else {
       video?.setAttribute("loop", "");
@@ -13,6 +15,14 @@ function useEnableLoopVideo(isEnableAlwaysLoop?: boolean) {
     setIsLooped(video?.loop);
   }, [isEnableAlwaysLoop]);
 
+  const handleAlwaysLoop = useCallback(() => {
+    const video = videoRef.current;
+    if (isEnableAlwaysLoop && video) video.setAttribute("loop", "");
+    if (!isEnableAlwaysLoop && video) video.removeAttribute("loop");
+    setIsLooped(video?.loop);
+  }, [isEnableAlwaysLoop]);
+
+  // We change video without reload page
   const handleChangeVideo = useCallback(
     (ev: Event) => {
       const target = ev.target as HTMLVideoElement;
@@ -23,13 +33,13 @@ function useEnableLoopVideo(isEnableAlwaysLoop?: boolean) {
   );
 
   useEffect(() => {
-    const video = document.querySelector("video");
-    handleToggleLoopAttributeVideo();
+    const video = (videoRef.current = document.querySelector("video"));
+    handleAlwaysLoop();
     video?.addEventListener("loadedmetadata", handleChangeVideo);
     return () => {
       video?.removeEventListener("loadedmetadata", handleChangeVideo);
     };
-  }, [handleChangeVideo, handleToggleLoopAttributeVideo]);
+  }, [handleChangeVideo, handleAlwaysLoop]);
 
   return { isLooped, setIsLooped, handleToggleLoopAttributeVideo };
 }

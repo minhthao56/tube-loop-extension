@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { SettingMessage, TypeMessage } from "../types/messages";
+import { getDefaultValueFromStorage } from "../helpers/storage";
+import { SettingMessage } from "../types/messages";
 
 export default function useMessageToggle() {
   const [isEnableButtonLoop, setIsEnableButtonLoop] = useState(true);
@@ -17,15 +18,9 @@ export default function useMessageToggle() {
 
   useEffect(() => {
     (async () => {
-      const [valueButtonLoop, valueAlwayLoop] = await Promise.all([
-        chrome.storage.local.get(TypeMessage.BUTTON_LOOP_STATUS),
-        chrome.storage.local.get(TypeMessage.ALWAYS_LOOP),
-      ]);
-
-      setIsEnableButtonLoop(
-        valueButtonLoop[TypeMessage.BUTTON_LOOP_STATUS] || false
-      );
-      setIsEnableButtonLoop(valueAlwayLoop[TypeMessage.ALWAYS_LOOP] || false);
+      const { alwayLoop, buttonLoop } = await getDefaultValueFromStorage();
+      setIsEnableButtonLoop(buttonLoop);
+      setIsEnableAlwaysLoop(alwayLoop);
     })();
 
     chrome.runtime.onMessage.addListener(handleMessage);

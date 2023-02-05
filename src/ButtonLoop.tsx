@@ -20,10 +20,7 @@ function App() {
               alignItems: "center",
             }}
           >
-            <BiRepeat
-              size={26}
-              style={{ color: isLooped ? "white" : "gray" }}
-            />
+            <BiRepeat size={26} style={{ opacity: isLooped ? 1 : 0.6 }} />
           </div>
         </div>
       ) : null}
