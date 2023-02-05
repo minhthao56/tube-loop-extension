@@ -1,6 +1,6 @@
 {
   "name": "TubeLoop",
-  "description": "TubeLoop extension will add new a loop shortcut in the Youtube player control. That will help user to using the loop feature easier in Youtube",
+  "description": "TubeLoop extension will allow user to using the loop feature easier in Youtube",
   "version": "1.0",
   "manifest_version": 3,
   "permissions": ["activeTab", "scripting", "tabs", "storage", "identity"],
