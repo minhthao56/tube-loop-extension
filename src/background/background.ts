@@ -1,7 +1,7 @@
 import { URL_YOUTUBE_PLAY } from "../constants/app";
 
-chrome.tabs.onUpdated.addListener(moveToFirstPosition);
-async function moveToFirstPosition(
+chrome.tabs.onUpdated.addListener(handleUpdated);
+async function handleUpdated(
   tabId: number,
   changeInfo: chrome.tabs.TabChangeInfo,
   tab: chrome.tabs.Tab
