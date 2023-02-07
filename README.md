@@ -1,5 +1,6 @@
 # Shortcut loop for Youtube player
 
+![License](https://img.shields.io/github/license/minhthao56/tube-loop-extension)
 TubeLoop open source extension designed to provide a convenient shortcut for looping videos on YouTube, improving the video viewing experience with a simple and effective solution
 
 [Install from Chrome Web Store](https://chrome.google.com/webstore/detail/tubeloop/ojdalkdhflhjogcfmhkdcgbbnhceledm)
