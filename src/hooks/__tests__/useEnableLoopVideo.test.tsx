@@ -1,4 +1,10 @@
-import { renderHook, act } from "@testing-library/react";
+/* eslint-disable testing-library/no-node-access */
+import {
+  renderHook,
+  act,
+  createEvent,
+  fireEvent,
+} from "@testing-library/react";
 import useEnableLoopVideo from "../useEnableLoopVideo";
 
 describe("useEnableLoopVideo hook", () => {
@@ -11,9 +17,19 @@ describe("useEnableLoopVideo hook", () => {
     );
   };
 
-  it("should return data correctly", () => {});
+  it("should return data correctly", () => {
+    const { result } = renderHook(() => useEnableLoopVideo(), {
+      wrapper: TestComponent,
+    });
 
-  it("should toggle the loop attribute of a video", () => {
+    expect(result.current.isLooped).toBe(false);
+    expect(typeof result.current.setIsLooped).toBe("function");
+    expect(typeof result.current.handleToggleLoopAttributeVideo).toBe(
+      "function"
+    );
+  });
+
+  it("should change value of isLooped after calling function handleToggleLoopAttributeVideo", () => {
     const { result } = renderHook(() => useEnableLoopVideo(), {
       wrapper: TestComponent,
     });
@@ -21,30 +37,92 @@ describe("useEnableLoopVideo hook", () => {
     act(() => {
       result.current.handleToggleLoopAttributeVideo();
     });
+    expect(result.current.isLooped).toBe(true);
+
+    act(() => {
+      result.current.handleToggleLoopAttributeVideo();
+    });
+
+    expect(result.current.isLooped).toBe(false);
   });
 
-  //   it("should always loop the video if isEnableAlwaysLoop is true", () => {
-  //     const { result } = renderHook(() => useEnableLoopVideo(true));
-  //     const [, setVideoRef] = result.current.videoRef;
+  it("should call setAttribute when calling handleToggleLoopAttributeVideo and isEnableAlwaysLoop is false", () => {
+    const { result } = renderHook(() => useEnableLoopVideo(), {
+      wrapper: TestComponent,
+    });
 
-  //     act(() => {
-  //       setVideoRef({
-  //         current: { setAttribute: jest.fn(), removeAttribute: jest.fn() } as any,
-  //       });
-  //     });
+    const removeAttribute = jest.fn();
+    const setAttribute = jest.fn();
+    const video = document.querySelector("video") as HTMLVideoElement;
+    video.removeAttribute = removeAttribute;
+    video.setAttribute = setAttribute;
 
-  //     const [, { handleToggleLoopAttributeVideo }] = result.current;
-  //     act(() => {
-  //       handleToggleLoopAttributeVideo();
-  //     });
+    act(() => {
+      result.current.handleToggleLoopAttributeVideo();
+    });
+    expect(setAttribute).toBeCalled();
+  });
 
-  //     const [, videoRef] = result.current.videoRef;
-  //     expect(videoRef.current.setAttribute).toHaveBeenCalledWith("loop", "");
+  it("should call removeAttribute when calling handleToggleLoopAttributeVideo and isEnableAlwaysLoop is false", () => {
+    const { result } = renderHook(() => useEnableLoopVideo(), {
+      wrapper: TestComponent,
+    });
 
-  //     act(() => {
-  //       handleToggleLoopAttributeVideo();
-  //     });
+    const removeAttribute = jest.fn();
+    const video = document.querySelector("video") as HTMLVideoElement;
+    video.removeAttribute = removeAttribute;
 
-  //     expect(videoRef.current.setAttribute).toHaveBeenCalledWith("loop", "");
-  //   });
+    act(() => {
+      result.current.handleToggleLoopAttributeVideo();
+    });
+
+    expect(result.current.isLooped).toBe(true);
+
+    act(() => {
+      result.current.handleToggleLoopAttributeVideo();
+    });
+    expect(removeAttribute).toBeCalled();
+  });
+
+  it("should not call removeAttribute and setAttribute when calling handleToggleLoopAttributeVideo and isEnableAlwaysLoop is true", () => {
+    const { result } = renderHook(() => useEnableLoopVideo(true), {
+      wrapper: TestComponent,
+    });
+
+    const removeAttribute = jest.fn();
+    const setAttribute = jest.fn();
+    const video = document.querySelector("video") as HTMLVideoElement;
+    video.removeAttribute = removeAttribute;
+    video.setAttribute = setAttribute;
+
+    act(() => {
+      result.current.handleToggleLoopAttributeVideo();
+    });
+
+    expect(removeAttribute).not.toBeCalled();
+    expect(setAttribute).not.toBeCalled();
+  });
+
+  it("should  isLooped is false video after loaded meta data and isEnableAlwaysLoop is false", () => {
+    const { result } = renderHook(() => useEnableLoopVideo(), {
+      wrapper: TestComponent,
+    });
+
+    const elementVideo = document.querySelector("video") as HTMLVideoElement;
+    const loadedMetadataEvent = createEvent.loadedMetadata(elementVideo);
+    fireEvent(elementVideo, loadedMetadataEvent);
+
+    expect(result.current.isLooped).toBe(false);
+  });
+  it("should  isLooped is true video after loaded meta data and isEnableAlwaysLoop is true", () => {
+    const { result } = renderHook(() => useEnableLoopVideo(true), {
+      wrapper: TestComponent,
+    });
+
+    const elementVideo = document.querySelector("video") as HTMLVideoElement;
+    const loadedMetadataEvent = createEvent.loadedMetadata(elementVideo);
+    fireEvent(elementVideo, loadedMetadataEvent);
+
+    expect(result.current.isLooped).toBe(true);
+  });
 });
